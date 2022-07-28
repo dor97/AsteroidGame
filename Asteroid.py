@@ -26,17 +26,13 @@ class asteroid:
             self.inScreen = inScreen
         self.val = 2
         self.pos = (self.x, self.y)
-        #print(self.corder)
         self.size = size
         self.len = 8 * self.size
         self.dir = pygame.Vector2(0, -self.len).rotate(22.5)
         self.hitBoxVecX = (int)((self.len * math.sin(math.radians(67.5)) - self.len * math.sin(math.radians(22.5))) * (2 / 3) + self.x + self.len * math.sin(math.radians(22.5)))
-        #self.rectX2 = (int)(self.x - (self.len * math.sin(math.radians(67.5)) - self.len * math.sin(math.radians(22.5))))
         self.hitBoxVecY = (int)(self.y - self.len * math.sin(math.radians(22.5)) - (self.len * math.sin(math.radians(67.5)) - self.len * math.sin(math.radians(22.5))) * (2 / 3))
-        #self.rectY2 = (int)(self.y + (self.len * math.sin(math.radians(67.5)) - self.len * math.sin(math.radians(22.5))))
         self.hitBoxVec = pygame.Vector2(self.hitBoxVecX - self.x, self.hitBoxVecY - self.y)
         self.hitBoxRotateDegree = 0
-        #self.vecDir = (pygame.Vector2(0, self.len)).rotate(self.deg)
         self.moveRadian = math.radians(self.moveDegree)
         self.vecDir = pygame.Vector2(self.len * math.cos(self.moveRadian), self.len * math.sin(self.moveRadian))
         
@@ -78,9 +74,7 @@ class asteroid:
 
 
     def draw(self, win, displayHitBox):
-        self.pos = (self.x, self.y)
-        #pygame.draw.polygon(win, BULE, [self.pos + temp, self.pos + temp.rotate(72), self.pos + temp.rotate(72*2), self.pos + temp.rotate(72*3), self.pos + temp.rotate(72*4)])
-        #pygame.draw.polygon(win, BULE, [self.pos + temp, self.pos + temp.rotate(60), self.pos + temp.rotate(60*2), self.pos + temp.rotate(60*3), self.pos + temp.rotate(60*4), self.pos + temp.rotate(60*5)], 4)
+        self.pos = pygame.Vector2(self.x, self.y)
         pygame.draw.polygon(win, BULE, [self.pos + self.dir, self.pos + self.dir.rotate(45), self.pos + self.dir.rotate(45*2), self.pos + self.dir.rotate(45*3), self.pos + self.dir.rotate(45*4), self.pos + self.dir.rotate(45*5), self.pos + self.dir.rotate(45*6), self.pos + self.dir.rotate(45*7)],5)
         if displayHitBox:
             pygame.draw.polygon(win, GREEN, [self.pos + self.hitBoxVec, self.pos + self.hitBoxVec.rotate(90), self.pos + self.hitBoxVec.rotate(2*90), self.pos + self.hitBoxVec.rotate(3*90)], 1)
@@ -93,7 +87,6 @@ class asteroid:
 
 
     def move(self):
-        #print(self.x, self.y)
         self.x += self.val * math.cos(self.moveRadian)
         self.y += self.val * math.sin(self.moveRadian)
         if not self.inScreen:

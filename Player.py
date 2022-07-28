@@ -11,13 +11,12 @@ WHITE = (255, 255, 255)
 
 
 class player:
-    def __init__(self):
+    def __init__(self, score = 0, playerLives = 3):
         self.x = width // 2
         self.y = height // 2
         self.pos = (self.x, self.y)
         self.dir1 = pygame.Vector2(0, -1)
         self.dir2 = self.dir1.rotate(120)
-        #self.dir2.scale_to_length(self.dir1.length() / 2)
         self.dir3 = self.dir2.rotate(120)
         self.color = RED
         self.bullets = []
@@ -26,7 +25,8 @@ class player:
         self.speedY = 0
         self.hitBoxRotateDegree = 0
         self.isAlive = True
-        self.score = 0
+        self.score = score
+        self.lives = playerLives
 
     def draw(self, win, displayHitBox):
         if self.isAlive:
@@ -38,18 +38,8 @@ class player:
             if displayHitBox:
                 pygame.draw.polygon(win, BULE, [self.pos + self.hitBoxPos1, self.pos + self.hitBoxPos2, self.pos + self.hitBoxPos3, self.pos + self.hitBoxPos4], 2)
                 pygame.draw.line(win, GREEN, self.pos , self.pos + self.dir1 * 20)        
-        #print(self.rectPos1, self.rectPos2, self.rectPos3, self.rectPos4)
 
-        # ship = pygame.image.load("spaceShip_red.png")
-        # ship = pygame.transform.scale(ship, (80, 80))
-        # win.blit(ship, (self.x, self.y))
     def move(self):
-        # self.x += self.dir1[0]
-        # self.y += self.dir1[1]
-        # if self.dir1.length() > 10:
-        #     self.dir1.scale_to_length(10)
-        # self.pos = (self.x, self.y)
-        
         if self.val > 4:
             self.val = 4
         if self.val < -4:
@@ -92,7 +82,7 @@ class player:
         self.bullets.remove(bullet)
 
     def makeLossAnime(self):
-        self.explosions = [bullet(self.x, self.y, self.dir2, 10), bullet(self.x, self.y, self.dir2.rotate(360 - 60), 10), bullet(self.x, self.y, self.dir3, 10), bullet(self.x, self.y, self.dir3.rotate(60), 10)]
+        self.explosions = [bullet(self.x, self.y, self.dir2, 15), bullet(self.x, self.y, self.dir2.rotate(360 - 60), 15), bullet(self.x, self.y, self.dir3, 15), bullet(self.x, self.y, self.dir3.rotate(60), 15)]
 
     def lossAnime(self, win):
         self.explosions[0].count -= 1

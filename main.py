@@ -1,5 +1,4 @@
 from math import cos, sin
-#from msilib.schema import Font
 import pygame
 import math
 import numpy as np
@@ -22,13 +21,7 @@ WHITE = (255, 255, 255)
 
 
 def collision(rectPos1, rectPos2, rectPos3, rectPos4, rotateDegree, checkCollisionPos1, checkCollisionPos2 = 0, checkCollisionPos3 = 0, checkCollisionPos4 = 0, checkCollisionPos5 = 0, checkCollisionPos6 = 0, checkCollisionPos7 = 0, checkCollisionPos8 = 0):
-    # d = vec.angle_to(pygame.Vector2(1,1))
-    # if d >= 0:
-    #     deg = 360 - d
-    # else:
-    #     deg = -d
     rotateDegree = 360 - rotateDegree
-    #deg = 360 - vec.angle_to(pygame.Vector2(1,0))
     rot = np.array([[math.cos(math.radians(rotateDegree)), math.sin(math.radians(rotateDegree))], [-math.sin(math.radians(rotateDegree)), math.cos(math.radians(rotateDegree))]])
     newRectpos1 = np.array(rectPos1) @ rot
     newRectpos2 = np.array(rectPos2) @ rot
@@ -49,13 +42,8 @@ def collision(rectPos1, rectPos2, rectPos3, rectPos4, rotateDegree, checkCollisi
         checkCollisionPos2 = np.array(checkCollisionPos2) @ rot
         checkCollisionPos3 = np.array(checkCollisionPos3) @ rot
 
-        #print(pos1, pos2, pos3, pos4, pos)
         if checkCollisionPos4 == 0:
             if (x[0] < checkCollisionPos1[0] < x[-1] and y[0] < checkCollisionPos1[1] < y[-1]) or (x[0] < checkCollisionPos2[0] < x[-1] and y[0] < checkCollisionPos2[1] < y[-1]) or (x[0] < checkCollisionPos3[0] < x[-1] and y[0] < checkCollisionPos3[1] < y[-1]):
-                #print(deg)
-                #print(cenPos + vec, cenPos + vec.rotate(90), cenPos + vec.rotate(2*90), cenPos + vec.rotate(3*90))
-                #print(pos1, pos2, pos3, pos4, checkCollisionPos1)
-                #print("next:")
                 return True
             return False
         else:
@@ -73,12 +61,14 @@ def collision(rectPos1, rectPos2, rectPos3, rectPos4, rotateDegree, checkCollisi
 def draw(win, playersSpaceShip, asteroidsList, displayHitBox):
     win.fill(BLACK)
     score = FONT.render("score: " + str(playersSpaceShip.score), 1, WHITE)
+    lives = FONT.render("lives: " + str(playersSpaceShip.lives), 1, WHITE)
     win.blit(score, (width - score.get_width() - 10, 10))
+    win.blit(lives, (10, 10))
     playersSpaceShip.draw(win, displayHitBox)
     for i in asteroidsList:
         i.draw(win, displayHitBox)
     playersSpaceShip.drawBullet(win)
-    if not playersSpaceShip.isAlive:
+    if playersSpaceShip.lives == 0:
         restart = FONT.render("press r to restart game", 1, WHITE)
         win.blit(restart, (width // 2  - restart.get_width() // 2, height // 2 - restart.get_height() // 2))
 
@@ -91,8 +81,6 @@ def moveAsteroids(asteroidsList):
     for i in rem:
         asteroidsList.remove(i)
 
-# def getColor(win, x, y):
-#     return win.get_at((x, y))
 
 def movePlayer(playersSpaceShip):
     keys_pressed = pygame.key.get_pressed()
@@ -109,13 +97,16 @@ def checkForCollision(playersSpaceShip, asteroidsList):
     rem = []
     for i in asteroidsList:
         if collision(i.pos + i.hitBoxVec, i.pos + i.hitBoxVec.rotate(90), i.pos + i.hitBoxVec.rotate(2*90), i.pos + i.hitBoxVec.rotate(3*90), i.hitBoxRotateDegree, playersSpaceShip.pos + playersSpaceShip.dir1 * 20, playersSpaceShip.pos + playersSpaceShip.dir2 * 10, playersSpaceShip.pos + playersSpaceShip.dir3 * 10):
+            playersSpaceShip.lives -= 1
             playersSpaceShip.isAlive = False
             playersSpaceShip.makeLossAnime()
             break
         if collision(playersSpaceShip.pos + playersSpaceShip.hitBoxPos1, playersSpaceShip.pos + playersSpaceShip.hitBoxPos2, playersSpaceShip.pos + playersSpaceShip.hitBoxPos3, playersSpaceShip.pos + playersSpaceShip.hitBoxPos4, playersSpaceShip.hitBoxRotateDegree, i.pos + i.dir, i.pos + i.dir.rotate(60), i.pos + i.dir.rotate(2*60), i.pos + i.dir.rotate(3*60), i.pos + i.dir.rotate(4*60), i.pos + i.dir.rotate(5*60), i.pos + i.dir.rotate(6*60), i.pos + i.dir.rotate(7*60)):
+            playersSpaceShip.lives -= 1
             playersSpaceShip.isAlive = False
             playersSpaceShip.makeLossAnime()
             break
+            
         for bullet in playersSpaceShip.bullets:
             if collision(i.pos + i.hitBoxVec, i.pos + i.hitBoxVec.rotate(90), i.pos + i.hitBoxVec.rotate(2*90), i.pos + i.hitBoxVec.rotate(3*90), i.hitBoxRotateDegree, (bullet.x, bullet.y)):
                 rem.append(i)
@@ -139,6 +130,7 @@ def main():
         playersSpaceShip = player()
         asteroidsList = []
         game = True
+        
         while game:
             clock.tick(FPS)
             for event in pygame.event.get():
@@ -164,12 +156,20 @@ def main():
                     time = pygame.time.get_ticks()
                 moveAsteroids(asteroidsList)
 
-                
-            #a.draw(win)
-            #print(getColor(win, p.x, p.y))
+
             draw(win, playersSpaceShip, asteroidsList, displayHitBox)
-            if not playersSpaceShip.isAlive and playersSpaceShip.explosions[0].count > 0:
+            while not playersSpaceShip.isAlive and playersSpaceShip.explosions[0].count > 0:
+                draw(win, playersSpaceShip, asteroidsList, displayHitBox)
                 playersSpaceShip.lossAnime(win)
+                pygame.display.update()
+                
+            if not playersSpaceShip.isAlive and playersSpaceShip.lives > 0:
+                draw(win, playersSpaceShip, asteroidsList, displayHitBox)
+                pygame.display.update()
+                pygame.time.delay(2000)
+                playersSpaceShip.__init__(playersSpaceShip.score, playersSpaceShip.lives)
+                asteroidsList = []
+
             pygame.display.update()
 
     pygame.quit()

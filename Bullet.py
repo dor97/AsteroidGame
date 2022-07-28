@@ -20,3 +20,4 @@ class bullet:
 
     def draw(self, win):
         pygame.draw.circle(win, RED, (self.x, self.y), 2)
+
