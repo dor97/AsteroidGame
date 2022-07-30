@@ -19,7 +19,7 @@ GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
 
 
-
+#check for collision of a rectangle and a point
 def collision(rectPos1, rectPos2, rectPos3, rectPos4, rotateDegree, checkCollisionPos1, checkCollisionPos2 = 0, checkCollisionPos3 = 0, checkCollisionPos4 = 0, checkCollisionPos5 = 0, checkCollisionPos6 = 0, checkCollisionPos7 = 0, checkCollisionPos8 = 0):
     rotateDegree = 360 - rotateDegree
     rot = np.array([[math.cos(math.radians(rotateDegree)), math.sin(math.radians(rotateDegree))], [-math.sin(math.radians(rotateDegree)), math.cos(math.radians(rotateDegree))]])
@@ -57,7 +57,7 @@ def collision(rectPos1, rectPos2, rectPos3, rectPos4, rotateDegree, checkCollisi
             return False
 
 
-
+#draw to the screen
 def draw(win, playersSpaceShip, asteroidsList, displayHitBox):
     win.fill(BLACK)
     score = FONT.render("score: " + str(playersSpaceShip.score), 1, WHITE)
@@ -81,7 +81,7 @@ def moveAsteroids(asteroidsList):
     for i in rem:
         asteroidsList.remove(i)
 
-
+#get input from the user about moveing space ship
 def movePlayer(playersSpaceShip):
     keys_pressed = pygame.key.get_pressed()
     if keys_pressed[pygame.K_w]:
@@ -93,6 +93,7 @@ def movePlayer(playersSpaceShip):
     if keys_pressed[pygame.K_d]:
         playersSpaceShip.rotate(5)
 
+#check for collision of different objects using collision function
 def checkForCollision(playersSpaceShip, asteroidsList):
     rem = []
     for i in asteroidsList:
@@ -138,11 +139,11 @@ def main():
                     run = False
                     game = False
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_SPACE: #shot
                         playersSpaceShip.addBullet()
-                    elif event.key == pygame.K_h:
+                    elif event.key == pygame.K_h:   #show hit box
                         displayHitBox = not displayHitBox
-                    elif event.key == pygame.K_r:
+                    elif event.key == pygame.K_r:   #reset game
                         game = False
             
             movePlayer(playersSpaceShip)

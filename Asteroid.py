@@ -19,7 +19,7 @@ class asteroid:
             self.yInCorder = random.randint(0, 200)
             self.inScreen = False
             self.findXandY()
-        else:
+        else:   #if asteroid not size 4 than it was split from a asteroid, it being set with values relative to the asteroid ot was split from 
             self.moveDegree = deg
             self.x = x
             self.y = y
@@ -37,7 +37,7 @@ class asteroid:
         self.vecDir = pygame.Vector2(self.len * math.cos(self.moveRadian), self.len * math.sin(self.moveRadian))
         
 
-
+    #find position for the asteroid to spawn and angle of movement
     def findXandY(self):
         if self.corder == 1:
             self.x = self.xInCorder - 200
@@ -85,13 +85,13 @@ class asteroid:
         self.hitBoxVec = self.hitBoxVec.rotate(1)
 
 
-
     def move(self):
         self.x += self.val * math.cos(self.moveRadian)
         self.y += self.val * math.sin(self.moveRadian)
         if not self.inScreen:
             self.inScreen = self.checkInScren()
-        
+
+    #check if the asteroid is inside the screen
     def checkInScren(self):
         if 0 < self.x < width and 0 < self.y < height:
             return True
